@@ -1,0 +1,6 @@
+export const MAIN_COLOR = '#e94057' 
+export const SECOND_COLOR = '#fdecee'
+export const PRIMARY = '#2934D0'
+export const BG = '#f3f3f3'
+export const PURPPLE  = '#8A2387'
+export const ORANGE  = '#F27121'

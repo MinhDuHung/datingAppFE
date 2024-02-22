@@ -1,5 +1,6 @@
 package com.datingappfe
-
+import com.brentvatne.react.ReactVideoPackage;
+import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -16,11 +17,14 @@ class MainApplication : Application(), ReactApplication {
 
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-            }
+        override fun getPackages(): List<ReactPackage> {
+             val packages = PackageList(this).packages
+                packages.add(ReactVideoPackage())
+                 packages.add(RNAudioRecorderPlayerPackage())
+          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // packages.add(new MyReactNativePackage());
+          return PackageList(this).packages
+        }
 
         override fun getJSMainModuleName(): String = "index"
 

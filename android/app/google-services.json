@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "156300340111",
+    "project_id": "datingapp-6b6fe",
+    "storage_bucket": "datingapp-6b6fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156300340111:android:967a9490ca30f24fcd79fa",
+        "android_client_info": {
+          "package_name": "com.datingappfe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "156300340111-014ukrmhdoh46p96r6204bqp5s881pgk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.datingappfe",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "156300340111-g52n46pev2sip4uqe1sq9v3k1n7nlvea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4bbYKwNyitdC2sx93QwkCAXuQ8FrzT1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "156300340111-g52n46pev2sip4uqe1sq9v3k1n7nlvea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

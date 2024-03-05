@@ -1,7 +1,7 @@
 
 import io from 'socket.io-client';
 
-const SOCKET_URL = 'https://e5a0-2402-800-6105-2680-bcf3-b193-4fcc-c61c.ngrok-free.app'
+const SOCKET_URL = 'http://192.168.1.11:3001'
 
 class WSService {
 

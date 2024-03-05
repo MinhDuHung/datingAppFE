@@ -23,9 +23,10 @@ import ChatRoom from './src/components/ChatRoom';
 import NavigationServices from './src/utils/NavigationServices';
 import { Platform, PermissionsAndroid } from 'react-native';
 import { requestUserPermission, notificationListeners } from './src/utils/FCM/notifications';
-import TestSocket from './src/components/TestSocket';
 import PostActivity from './src/screens/inApp/PostActivity';
 import Activites from './src/screens/inApp/Activites';
+import DetailImages from './src/screens/inApp/DetailImages';
+import { AppState } from 'react-native';
 const Stack = createNativeStackNavigator();
 function App() {
   async function requestNotificationPermission() {
@@ -47,17 +48,23 @@ function App() {
     }
   }
 
+  const appStateChangeHandler = (nextAppState: any) => {
+    console.log(nextAppState)
+  };
+
   React.useEffect(() => {
     requestNotificationPermission()
   }, [])
+
+  AppState.addEventListener('change', appStateChangeHandler);
+
   return (
-    <AppProvider >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer ref={(ref) => NavigationServices.setTopLevelNavigator(ref)}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer ref={(ref) => NavigationServices.setTopLevelNavigator(ref)}>
+        <AppProvider>
           <Stack.Navigator screenOptions={{
             headerShown: false
           }}>
-            {/* <Stack.Screen name="TestSocket" component={TestSocket} /> */}
             <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="Onboarding" component={Onboarding} />
             <Stack.Screen name="PostActivity" component={PostActivity} />
@@ -67,6 +74,7 @@ function App() {
             <Stack.Screen name="BottomTab" component={BottomTab} />
             <Stack.Screen name="InformationForm" component={InformationForm} />
             <Stack.Screen name="Interests" component={Interests} />
+            <Stack.Screen name="DetailImages" component={DetailImages} />
             <Stack.Screen name="Gender" component={Gender} />
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="SignupWithEmail" component={SignupWithEmail} />
@@ -76,9 +84,9 @@ function App() {
             <Stack.Screen name="PreviewProfile" component={PreviewProfile} />
             <Stack.Screen name="SuccessfulMatching" component={SuccessfulMatching} />
           </Stack.Navigator>
-        </NavigationContainer>
-      </GestureHandlerRootView>
-    </AppProvider>
+        </AppProvider>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

@@ -1,10 +1,12 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { memo, useContext } from 'react'
 import { KANIT_BOLD, KANIT_EXTRALIGHT, KANIT_ITALIC, KANIT_REGULAR, KANIT_SEMIBOLD, KANIT_THIN } from '../assets/fonts/font'
 import { FlatList } from 'react-native-gesture-handler'
 import { MAIN_COLOR } from '../assets/color'
+import { AppContext } from '../context/AppContext'
 
 const MessagesList = ({ navigation, setIsChatRoomOn, data, specifiedUser }: any) => {
+    const { user, setUser }: any = useContext(AppContext)
     return (
         <View style={{ flex: 1, gap: 10, width: '100%', paddingHorizontal: 30 }}>
             <Text style={styles.txt}>Messages</Text>
@@ -13,6 +15,7 @@ const MessagesList = ({ navigation, setIsChatRoomOn, data, specifiedUser }: any)
                 keyExtractor={(item, index): any => (item + index)}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item, index }) => {
+                    const sender = item.lastMess?.sender == user._id ? 'You' : ''
                     return (
                         <TouchableOpacity style={styles.card}
                             onPress={() => {
@@ -26,7 +29,15 @@ const MessagesList = ({ navigation, setIsChatRoomOn, data, specifiedUser }: any)
                             </TouchableOpacity>
                             <View>
                                 <Text numberOfLines={1} style={styles.name}>{item.lastName + ' ' + item.firstName}</Text>
-                                <Text numberOfLines={1} style={styles.chatContent}>You: Hello it is me..</Text>
+                                {
+                                    item.lastMess?.text ?
+                                        <Text numberOfLines={1} style={styles.chatContent}>{sender + ': ' + item.lastMess?.text}</Text> :
+                                        (item.lastMess?.video ? <Text numberOfLines={1} style={styles.chatContent}>{sender + ' sent a video'}</Text> :
+                                            item.lastMess?.img ? <Text numberOfLines={1} style={styles.chatContent}>{sender + ' sent an image'}</Text> :
+                                                item.lastMess?.music ? <Text numberOfLines={1} style={styles.chatContent}>{sender + ' sent an audio voice'}</Text> :
+                                                    <Text numberOfLines={1} style={styles.chatContent}>{item.lastMess}</Text>)
+                                }
+
                             </View>
                             <View style={{ position: 'absolute', right: 0 }}>
                                 <Text style={styles.date}>30ms</Text>
@@ -43,7 +54,7 @@ const MessagesList = ({ navigation, setIsChatRoomOn, data, specifiedUser }: any)
     )
 }
 
-export default MessagesList
+export default memo(MessagesList)
 
 const styles = StyleSheet.create({
     name: {

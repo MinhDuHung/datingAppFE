@@ -15,16 +15,6 @@ const ImageDetails = ({ navigation, route }: any) => {
     const posX = useSharedValue(0)
     const posY = useSharedValue(0)
     const AnimatedImg = Animated.createAnimatedComponent(Image)
-    // const pinchHandler = useAnimatedGestureHandler<PinchGestureHandlerGestureEvent>({
-    //     onActive: (e) => {
-    //         scale.value = e.scale
-    //         posX.value = e.focalX
-    //         posY.value = e.focalY
-    //     },
-    //     onEnd: (e) => {
-    //         scale.value = withTiming(1)
-    //     }
-    // })
 
     const pinchGesture = Gesture.Pinch()
         .onUpdate((e) => {

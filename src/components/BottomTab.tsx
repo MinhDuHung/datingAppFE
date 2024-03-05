@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { MAIN_COLOR, SECOND_COLOR } from '../assets/color';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BlurView } from '@react-native-community/blur';
+import { KANIT_ITALIC } from '../assets/fonts/font';
 const { height, width } = Dimensions.get('window')
 
 const BottomTab = () => {
@@ -45,6 +46,9 @@ const BottomTab = () => {
                     tabBarIcon: ({ focused }: any) => {
                         return (
                             <TouchableOpacity style={[styles.icon, { borderTopColor: focused ? MAIN_COLOR : 'white' }]}>
+                                <View style={[styles.match, { backgroundColor: !focused ? MAIN_COLOR : SECOND_COLOR }]}>
+                                    <Text style={{ fontFamily: KANIT_ITALIC, color: focused ? MAIN_COLOR : SECOND_COLOR }}>2</Text>
+                                </View>
                                 <Entypo name='heart' size={35} color={focused ? MAIN_COLOR : 'gray'} />
                             </TouchableOpacity>
                         )
@@ -83,5 +87,9 @@ const styles = StyleSheet.create({
     icon: {
         justifyContent: 'center', alignItems: 'center', flex: 1,
         width: width / 4, borderTopWidth: 2
+    },
+    match: {
+        height: 20, width: 20, borderRadius: 10, position: 'absolute', zIndex: 1,
+        justifyContent: 'center', alignItems: 'center', top: 2, right: 25
     }
 })

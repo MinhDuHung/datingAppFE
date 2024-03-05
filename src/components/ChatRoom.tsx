@@ -18,8 +18,10 @@ const { height, width } = Dimensions.get('window')
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import Sound from 'react-native-sound'
 import Video from 'react-native-video'
+import { getNotificationsTokenByUserIdApi } from '../utils/API/tokenNotifications'
+import { sendToUserNotiTokenApi } from '../utils/API/sendNotification'
 
-const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: any) => {
+const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser, getAllUserMess }: any) => {
   const position = useSharedValue(height)
   const { user, setUser }: any = useContext(AppContext)
   const isOnline = useRef(true)
@@ -120,12 +122,6 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
   const onStartPlay = async () => {
     await audioRecorderPlayer.startPlayer();
     audioRecorderPlayer.addPlayBackListener((e) => {
-      // setAudio({
-      //   currentPositionSec: e.currentPosition,
-      //   currentDurationSec: e.duration,
-      //   playTime: audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)),
-      //   duration: audioRecorderPlayer.mmssss(Math.floor(e.duration)),
-      // });
       return;
     });
   };
@@ -153,11 +149,6 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
     React.useCallback(() => {
       socketServices.initializeSocket(concatenateAndSort(user._id, specifiedUser.current._id))
       socketServices.on(concatenateAndSort(user._id, specifiedUser.current._id), (data: any) => {
-        // if (page.current == 1)
-        //   setData((pre): any => ([data, ...pre]))
-        // if (data.length > 20) {
-        //   setData((pre): any => [...pre.slice(20)])
-        // }
         setData((pre: any): any => ([data, ...pre]))
       });
     }, [])
@@ -197,6 +188,7 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
       if (position.value >= (height - 80) / 2) {
         position.value = withTiming(height)
         setIsChatRoomOn(false)
+        getAllUserMess()
         socketServices.disconnect()
       } else {
         position.value = withTiming(80)
@@ -238,7 +230,6 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
                     }
                   </View>
                   : <Text style={[styles.text, { color: item.sender == user._id ? 'white' : 'black' }]}>{item.text}</Text>))
-
           }
         </View>
       </View>
@@ -264,7 +255,7 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
         time: new Date()
       })
       content.text = text
-    } if (media?.img) {
+    }else if (media?.img) {
       socketServices.emit(concatenateAndSort(user._id, specifiedUser.current._id), {
         sender: user._id,
         img: url.current,
@@ -274,7 +265,7 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
         time: new Date()
       })
       content.img = url.current
-    } if (media?.video) {
+    }else if (media?.video) {
       socketServices.emit(concatenateAndSort(user._id, specifiedUser.current._id), {
         sender: user._id,
         img: url.current,
@@ -284,7 +275,7 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
         time: new Date()
       })
       content.video = url.current
-    } if (audio != '00:00:00') {
+    }else if (audio != '00:00:00') {
       console.log(url)
       socketServices.emit(concatenateAndSort(user._id, specifiedUser.current._id), {
         sender: user._id,
@@ -302,14 +293,29 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
         content
       });
       if (res.status === 200) {
-        setText('');
-        setAudio('00:00:00');
-        url.current = '';
+        const res = await axios.get(getNotificationsTokenByUserIdApi, {
+          params: {
+            userId: specifiedUser.current._id
+          }
+        })
+        if (res.status == 200) {
+          const token: any = res.data[0].token
+          const _res = await axios.post(sendToUserNotiTokenApi, {
+            receivedToken: token,
+            title: "HUMI chat app",
+            body: `${user.lastName} has just send you an message`
+          })
+          if (_res.status == 200) {
+            setText('');
+            setAudio('00:00:00');
+            url.current = '';
+          }
+        }
       } else {
         console.error('Unexpected response status:', res.status);
       }
     } catch (error) {
-      console.error('Error while posting data to server:', error);
+      // console.error('Error while posting data to server:', error);
     }
   }
 
@@ -360,7 +366,7 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
       const fileName = `${user.emailAndPhone}/imageChat/${uri.substring(uri.lastIndexOf('/') + 1)}`;
       await storage().ref(fileName).putFile(uri);
       url.current = await storage().ref(fileName).getDownloadURL();
-      await handleSendMess()
+      handleSendMess()
       setMedia(undefined)
     }
     catch (error) {
@@ -374,7 +380,6 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
       await reference.putFile(audioFilePath);
       url.current = await reference.getDownloadURL();
       handleSendMess()
-      console.log('File uploaded successfully.');
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -426,16 +431,16 @@ const ChatRoom = ({ navigation, isChatRoomOn, setIsChatRoomOn, specifiedUser }: 
                     page.current++
                     getOneChatRoomBack()
                     if (data.length >= 100) {
-                      setData((pre: any[]) => pre.slice(50))
+                      setData((pre: any[]) => pre.splice(-50))
                     }
                   }}
                   onStartReached={() => {
-                    if (page.current > 1){
+                    if (page.current > 1) {
                       page.current--
                       getOneChatRoom()
-                      if (data.length >= 100) {
-                        setData((pre: any[]) => pre.slice(-50))
-                      }
+                      // if (data.length >= 100) {
+                      //   setData((pre: any[]) => pre.slice(-50))
+                      // }
                     }
                   }}
                   onEndReachedThreshold={.3}

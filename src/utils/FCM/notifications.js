@@ -18,7 +18,7 @@ export async function requestUserPermission() {
 async function getToken() {
     try {
         const token = await messaging().getToken();
-        console.log('tokeNoti :', token)
+        // console.log('tokeNoti :', token)
     } catch (error) {
         console.error(error)
     }
@@ -44,12 +44,8 @@ export async function notificationListeners() {
     messaging()
         .getInitialNotification()
         .then(remoteMessage => {
-            if (remoteMessage) {
-                console.log(
-                    'Notification caused app to open from quit state:',
-                    remoteMessage.notification,
-                );
-            }
+            // const topicName = remoteMessage.data.topic;
+            console.log('Device subscribed to topic:', remoteMessage);
         });
 
     return unsubscribe;

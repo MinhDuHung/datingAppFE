@@ -157,7 +157,7 @@ const Matches = ({ navigation }: any) => {
   function renderItemFunc({ item, index }: any) {
     return (
       <Pressable style={styles.card}>
-        <Image source={{ uri: item.images[0] }} style={styles.img} />
+        <Image source={{ uri: item?.images[0] }} style={styles.img} />
         <View style={styles.absCard}>
           <Text style={styles.lastName}>{item.lastName}, {calculateAge(item.dateOfBirth)}</Text>
           <View style={{ height: 50, width: '100%', borderBottomLeftRadius: 10, overflow: 'hidden', borderBottomRightRadius: 10 }}>

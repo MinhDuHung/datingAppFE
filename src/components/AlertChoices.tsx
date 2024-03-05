@@ -7,6 +7,7 @@ import axios from 'axios';
 import { logoutUserApi } from '../utils/API/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
 
 const { height, width } = Dimensions.get('window');
 const AlertChoices = ({ content, ACvisible, setACvisible, target, handleCancel }: any) => {
@@ -15,8 +16,9 @@ const AlertChoices = ({ content, ACvisible, setACvisible, target, handleCancel }
         const token = await AsyncStorage.getItem('token')
         await axios.post(logoutUserApi, {
             token
-        }).then(() => {
+        }).then(async () => {
             setACvisible(false)
+            await messaging().deleteToken();
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Welcome' }],

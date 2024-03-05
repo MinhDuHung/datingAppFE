@@ -53,7 +53,7 @@ const Discover = ({ navigation }: any) => {
                 },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('You can use the location');
+                // console.log('You can use the location');
                 await _getCurrentLocationAndThenUpdate();
             } else {
                 console.log('Location permission denied');
@@ -65,7 +65,7 @@ const Discover = ({ navigation }: any) => {
 
     const _getCurrentLocationAndThenUpdate = async () => {
         try {
-            _getCurrentLocation();
+            await _getCurrentLocation();
             await updateLocation();
         } catch (error) {
             console.error(error);
@@ -75,18 +75,18 @@ const Discover = ({ navigation }: any) => {
     const getAddressFromCoordinates = async (lat: any, lon: any) => {
         try {
             const response = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=xxx`
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyCwlJAz12c0Mb5y3UqYBmdgzlDTVxI1Pw0`
             );
 
             const data = await response.json();
-            console.log(data)
+            console.log('this is data from getAddressFromCoordinates: ', data)
             const formattedAddress = data?.results[3]?.formatted_address || 'unknown';
             setAddress(formattedAddress)
         } catch (error) {
             console.error(error);
         }
     };
-    const _getCurrentLocation = () => {
+    const _getCurrentLocation = async () => {
         Geolocation.getCurrentPosition(
             position => {
                 const { latitude, longitude } = position.coords;
@@ -105,7 +105,7 @@ const Discover = ({ navigation }: any) => {
                 location: pos.lat + " " + pos.lon,
             });
             if (res.status === 200) {
-                console.log('UPDATE location OK');
+                // console.log('UPDATE location OK');
             }
         } catch (error) {
             console.error(error);
@@ -131,7 +131,7 @@ const Discover = ({ navigation }: any) => {
             token: _token
         })
         if (res.status == 200) {
-            console.log(res.data.message)
+            // console.log('tokenNoti: ', res.data.message)
         }
     }, [])
 
@@ -156,7 +156,7 @@ const Discover = ({ navigation }: any) => {
     async function findUserByPagination() {
         await axios.get(findUserByPaginationApi, {
             params: {
-                cursor: cursor.current,
+                cursor: data[0]?.createdAt || null,
                 location: user.location,
                 gender: user.gender, interests: user.interests
             }
@@ -173,8 +173,8 @@ const Discover = ({ navigation }: any) => {
     }
 
     const removeFirstItem = () => {
-        setData((pre: any) => pre.slice(1));
         position.value = ({ x: 0, y: 0 })
+        setData((pre: any) => pre.slice(1));
         if (data.length <= 2) {
             findUserByPagination();
         }
@@ -222,8 +222,8 @@ const Discover = ({ navigation }: any) => {
                 runOnJS(handleMatching)()
             }
             else if (position.value.x < -150) {
-                position.value = ({ x: -500, y: 0 })
                 runOnJS(handleCancel)()
+                position.value = ({ x: -500, y: 0 })
             }
 
             else position.value = withTiming({ x: 0, y: 0 })
@@ -301,11 +301,11 @@ const Discover = ({ navigation }: any) => {
             <View style={{ flex: 9 }}>
                 <View style={styles.user}>
                     {
-                        // data.length == 0 ? setIsLoading(false) :
                         data.map((item: any, index: any) => {
                             const images: string[] = item.images || [];
                             if (index == 0) {
-                                cursor.current = item.createdAt
+                                // cursor.current = item.createdAt
+                                // console.log(item.lastName)
                                 let distance: string = '-1'
                                 if (isCoordinateStringValid(item.location)) {
                                     const coordinate = parseCoordinateString(item.location)
@@ -318,7 +318,10 @@ const Discover = ({ navigation }: any) => {
                                     <GestureDetector
                                         key={index} gesture={panGesture}>
                                         <PressableAnim
-                                            onPress={() => { navigation.navigate('PreviewProfile', { chosenId: item._id }) }}
+                                            onPress={() => {
+                                                navigation.navigate('ImageDetails', { img: item.images[0] })
+                                            }}
+                                            // onPress={() => { navigation.navigate('PreviewProfile', { chosenId: item._id }) }}
                                             style={[styles.card, { top: 40 }, { zIndex: 10 - index }, animatedStyle]}>
                                             <Image source={{ uri: images[0] }} style={[styles.img]} />
                                             <View style={styles.distance}>

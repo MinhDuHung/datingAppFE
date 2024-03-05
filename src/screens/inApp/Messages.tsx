@@ -1,5 +1,5 @@
 import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import Header from '../../components/Header'
 import Animated, { Easing, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
@@ -58,7 +58,7 @@ const Messages = ({ navigation }: any) => {
       })
       if (res.status == 200) {
         const data = res.data[0]?.friendsId
-        if (data){
+        if (data) {
           const users = await Promise.all(data.map(findUserById));
           setData(users)
         }
@@ -71,7 +71,7 @@ const Messages = ({ navigation }: any) => {
   const findUserById = async (id: any) => {
     try {
       const response = await axios.get(findUserByIdApi, {
-        params: { _id: id }
+        params: { _id: id, userId: user._id }
       });
       return response.data.user;
     } catch (error) {
@@ -92,12 +92,12 @@ const Messages = ({ navigation }: any) => {
           />
           <FontAwesome name='search' size={25} color={'gray'} style={{ position: 'absolute', top: 10, left: 45 }} />
         </View>
-        <Activities data={data} navigation={navigation}/>
+        <Activities data={data} navigation={navigation} />
       </View>
       <View style={{ flex: 6 }}>
         <MessagesList specifiedUser={specifiedUser} setIsChatRoomOn={setIsChatRoomOn} data={data} />
       </View>
-      {isChatRoomOn && <ChatRoom isChatRoomOn={isChatRoomOn} setIsChatRoomOn={setIsChatRoomOn} specifiedUser={specifiedUser} />}
+      {isChatRoomOn && <ChatRoom isChatRoomOn={isChatRoomOn} setIsChatRoomOn={setIsChatRoomOn} specifiedUser={specifiedUser} getAllUserMess={getAllUserMess} />}
       <AlertModal visible={visible} setVisible={setVisible} content={content} checkauth={checkauth} />
     </View >
   )

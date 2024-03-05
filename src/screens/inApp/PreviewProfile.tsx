@@ -24,7 +24,7 @@ import { calculateAge } from '../../utils/calculateAge'
 const { height, width } = Dimensions.get('window')
 
 const PreviewProfile = ({ navigation, route }: any) => {
-
+    const { chosenId } = route.params
     const { user, setUser }: any = useContext(AppContext)
     const [chosenUser, setChosenUser] = useState({
         firstName: "loading...",
@@ -39,8 +39,6 @@ const PreviewProfile = ({ navigation, route }: any) => {
     });
     const [isReadmore, setIsReadMore] = useState(true);
     const [blur, setBlur] = useState(0);
-
-    const { chosenId } = route.params
 
     useEffect(() => {
         async function initFunc() {
@@ -83,7 +81,7 @@ const PreviewProfile = ({ navigation, route }: any) => {
         }
     }
     return (
-        <View style={{ flex: 1, }}>
+        <View style={{ backgroundColor: 'black', height, width }}>
             <View>
                 <Image source={{ uri: chosenUser.images[0] }} style={{ height: height / 2, width, position: 'absolute' }} />
                 {
